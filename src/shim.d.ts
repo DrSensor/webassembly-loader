@@ -10,7 +10,3 @@ declare module '@webpack-contrib/schema-utils' {
   const validate: (options: Options) => void;
   export default validate;
 }
-
-declare interface Options {
-  [key: string]: any;
-}
