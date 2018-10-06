@@ -1,0 +1,20 @@
+{
+	"defaultSeverity": "error",
+	"extends": ["tslint:recommended", "tslint-config-prettier"],
+	"linterOptions": {
+		"exclude": ["node_modules/**", "examples/**"]
+	},
+	"rules": {
+		"quotemark": [true, "single", "avoid-escape"],
+		"indent": [true, "spaces", 2],
+		"interface-name": false,
+		"ordered-imports": false,
+		"object-literal-sort-keys": false,
+		"no-consecutive-blank-lines": true,
+		"no-console": false,
+		"curly": [true, "as-needed"],
+		"semicolon": [true, "always", "strict-bound-class-methods"],
+		"member-access": [true, "no-public"],
+		"no-namespace": [true, "allow-declarations"]
+	}
+}

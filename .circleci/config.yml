@@ -1,0 +1,189 @@
+# @prettier
+version: 2
+
+unit_tests: &unit_tests
+  steps:
+    - checkout
+    - restore_cache:
+        key: dependency-cache-{{ checksum "package-lock.json" }}
+    - run:
+        name: NPM Rebuild
+        command: npm install --quiet
+    - run:
+        name: NPM Build
+        command: npm run build
+    - run:
+        name: Run unit tests.
+        command: npm run ci:test
+
+jobs:
+  #region PREPARATION
+  dependency_cache:
+    docker:
+      - image: circleci/node:latest
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package-lock.json" }}
+      - run:
+          name: Install Dependencies
+          command: npm install --quiet
+      - save_cache:
+          key: dependency-cache-{{ checksum "package-lock.json" }}
+          paths:
+            - ./node_modules
+  analysis:
+    docker:
+      - image: circleci/node:latest
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package-lock.json" }}
+      - run:
+          name: NPM Rebuild
+          command: npm install --quiet
+      - run:
+          name: Run linting.
+          command: npm run ci:lint
+      - run:
+          name: Run NSP Security Check.
+          command: npm audit --quiet
+      - run:
+          name: Validate Commit Messages
+          command: npm run ci:lint:commits
+  #endregion
+
+  #region CROSS-BUILD
+  node8-latest:
+    docker:
+      - image: circleci/node:8
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package-lock.json" }}
+      - run:
+          name: NPM Rebuild
+          command: npm install --quiet
+      - run:
+          name: NPM Build
+          command: npm run build
+      - run:
+          name: Run unit tests.
+          command: npm run ci:coverage
+      - run:
+          name: Submit coverage data to codecov.
+          command: |
+            if [[ -z $CIRCLE_PULL_REQUEST ]]; then
+              bash <(curl -s https://codecov.io/bash)
+            fi
+          when: on_success
+  # node6-latest:
+  #   docker:
+  #     - image: circleci/node:6
+  #   <<: *unit_tests
+  node10-latest:
+    docker:
+      - image: circleci/node:10
+    <<: *unit_tests
+  #endregion
+
+  #region RELEASE VERSION
+  draft:
+    docker:
+      - image: circleci/node:latest
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package-lock.json" }}
+      - run:
+          name: NPM Rebuild
+          command: npm install --quiet
+      - run:
+          name: Validate Commit Messages
+          command: npm run release:validate
+      - run:
+          name: Draft Releases to Github
+          command: npm run ci:release
+  publish:
+    docker:
+      - image: circleci/node:latest
+    steps:
+      - checkout
+      - run:
+          name: set npm TOKEN
+          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package-lock.json" }}
+      - run:
+          name: NPM Rebuild
+          command: npm install --quiet
+      - run:
+          name: Publish to NPM
+          command: npm publish --verbose
+#endregion
+
+workflows:
+  version: 2
+  build and publish on tagging:
+    jobs:
+      #region PREPARATION
+      - dependency_cache:
+          filters:
+            tags:
+              only: /.*/
+      - analysis:
+          requires:
+            - dependency_cache
+          filters:
+            tags:
+              only: /.*/
+      #endregion
+
+      #region CROSS-BUILD
+      # - node6-latest:
+      #     requires:
+      #       - dependency_cache
+      #     filters:
+      #       tags:
+      #         only: /.*/
+      - node8-latest:
+          requires:
+            - analysis
+            # - node6-latest
+          filters:
+            tags:
+              only: /.*/
+      - node10-latest:
+          requires:
+            - analysis
+            # - node6-latest
+          filters:
+            tags:
+              only: /.*/
+      #endregion
+
+      #region RELEASE VERSION
+      - draft:
+          requires:
+            # - node6-latest
+            - node8-latest
+            - node10-latest
+          filters:
+            tags:
+              only: /^v\d+[.]\d+[.]\d+$/
+            branches:
+              ignore: /.*/
+      - check github Releases!:
+          type: approval
+          requires:
+            - draft
+          filters:
+            tags:
+              only: /^v\d+[.]\d+[.]\d+$/
+      - publish:
+          requires:
+            - check github Releases!
+          filters:
+            tags:
+              only: /^v\d+[.]\d+[.]\d+$/
+#endregion
