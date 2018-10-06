@@ -1,6 +1,18 @@
 {
 	"type": "object",
 	"definitions": {},
-	"properties": {},
+	"properties": {
+		"export": {
+			"type": "string",
+			"enum": [
+				"buffer",
+				"instance",
+				"module",
+				"async",
+				"async-instance",
+				"async-module"
+			]
+		}
+	},
 	"additionalProperties": false
 }

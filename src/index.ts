@@ -3,20 +3,23 @@ import { getOptions } from 'loader-utils';
 import validate from '@webpack-contrib/schema-utils';
 
 import schema from './options.json';
+import wasm2js from './transform';
 
-/**
- * @param source
- */
-export default function loader(this: loader.LoaderContext, source: Buffer) {
-  const options: Partial<Options> = getOptions(this) || {}; // ⬅️ empty object to make it "if-able"
+const defaultOptions = {
+  export: 'async'
+} as Export.Options;
+
+export default function(this: loader.LoaderContext, source: Buffer) {
+  const options: Partial<Export.Options> = getOptions(this) || defaultOptions;
 
   validate({
     name: 'binaryen-loader',
-    schema, // ⬅ ️validate options using JSON-schema in options.json
+    schema,
     target: options
   });
 
-  return 'exported default "WebAssembly Module/Instance"';
+  return wasm2js(source, options.export!);
 }
 
+export { default as wasm2js } from './transform';
 export const raw = true;
