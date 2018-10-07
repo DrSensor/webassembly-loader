@@ -54,6 +54,7 @@
 		"@types/jest": "^23.3",
 		"@types/loader-utils": "^1.1",
 		"@types/node": "^10.11",
+		"@types/webassembly-js-api": "0.0.1",
 		"@types/webpack": "^4.4",
 		"@webpack-contrib/test-utils": "^0.1",
 		"babel-core": "^7.0.0-bridge",
