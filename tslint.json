@@ -2,7 +2,7 @@
 	"defaultSeverity": "error",
 	"extends": ["tslint:recommended", "tslint-config-prettier"],
 	"linterOptions": {
-		"exclude": ["node_modules/**", "examples/**", "**/**.json"]
+		"exclude": ["node_modules/**", "examples/**", "**/**.json", "**/**.js"]
 	},
 	"rules": {
 		"quotemark": [true, "single", "avoid-escape"],

@@ -9,7 +9,7 @@ const defaultOptions = {
   export: 'async'
 } as Export.Options;
 
-export default function(this: loader.LoaderContext, source: Buffer) {
+module.exports = function(this: loader.LoaderContext, source: Buffer) {
   const options: Partial<Export.Options> = getOptions(this) || defaultOptions;
 
   validate({
@@ -18,8 +18,9 @@ export default function(this: loader.LoaderContext, source: Buffer) {
     target: options
   });
 
+  // if (options.export === 'buffer') return source; /*🤔*/
   return wasm2js(source, options.export!);
-}
+};
 
-export { default as wasm2js } from './transform';
-export const raw = true;
+module.exports.raw = true;
+module.exports.wasm2js = wasm2js;

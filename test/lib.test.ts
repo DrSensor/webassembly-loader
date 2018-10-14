@@ -1,26 +1,29 @@
 // tslint:disable:no-eval
-import { wasm2js } from '../src';
+import { wasm2js } from '../dist';
 import 'jest-extended';
 
 describe('When used as a Library', () => {
   /** @see https://developer.mozilla.org/en-US/docs/WebAssembly/Understanding_the_text_format#The_simplest_module */
   const wasmBuffer = Buffer.from([0x00, 0x61, 0x73, 0x6d, 0x01, 0, 0, 0]);
 
-  test('export as Buffer class', () => {
+  describe('export: "buffer"', () => {
     const code = wasm2js(wasmBuffer, 'buffer');
     const exportedModule = eval(code);
 
-    expect(exportedModule).toBeInstanceOf(Buffer);
+    test('exported module to be identical with input', () =>
+      expect(exportedModule).toEqual(wasmBuffer));
+    test('exported as Buffer class', () =>
+      expect(exportedModule).toBeInstanceOf(Buffer));
   });
 
-  test('export as WebAssembly.Module', () => {
+  test('exported as WebAssembly.Module', () => {
     const code = wasm2js(wasmBuffer, 'module');
     const exportedModule = eval(code);
 
     expect(exportedModule).toBeInstanceOf(WebAssembly.Module);
   });
 
-  test('export as WebAssembly.Instance', () => {
+  test('exported as WebAssembly.Instance', () => {
     const code = wasm2js(wasmBuffer, 'instance');
     const exportedModule = eval(code);
 
@@ -35,7 +38,7 @@ describe('When used as a Library', () => {
     expect(exportedModule()).resolves.toBeInstanceOf(WebAssembly.Module);
   });
 
-  test('export of export of WebAssembly.instantiate(WebAssembly.Module)', () => {
+  test('export of WebAssembly.instantiate(WebAssembly.Module)', () => {
     const code = wasm2js(wasmBuffer, 'async-instance');
     const exportedModule = eval(code);
 

@@ -2,18 +2,17 @@
 	"compilerOptions": {
 		"moduleResolution": "node",
 		"target": "esnext",
-		"module": "esnext",
+		"module": "commonjs",
 		"lib": ["esnext"],
 		"strict": true,
 		"skipLibCheck": true,
 		"allowSyntheticDefaultImports": true,
 		"experimentalDecorators": true,
 		"emitDecoratorMetadata": true,
-		"declaration": true,
-		"declarationDir": "types",
 		"outDir": "dist",
 		"typeRoots": ["node_modules/@types"],
-		"resolveJsonModule": true
+		"resolveJsonModule": true,
+		"allowJs": true
 	},
 	"include": ["src", "test"],
 	"exclude": ["node_modules", "examples"]
