@@ -1,0 +1,12 @@
+[package]
+name = "vue"
+version = "0.1.0"
+authors = ["Fahmi Akbar Wildana <fahmi.a.w@gmail.com>"]
+
+[lib]
+crate-type = ["cdylib"]
+
+[profile.release]
+lto = true
+
+[dependencies]
