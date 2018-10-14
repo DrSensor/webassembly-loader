@@ -23,12 +23,20 @@ export default [
 		input: "src/index.ts",
 		output: {
 			file: pkg.main,
-			format: "cjs",
-			exports: "named"
+			format: "cjs"
 		},
 		plugins: [
 			typescript({
-				exclude: ["test/**"]
+				exclude: ["test/**"],
+				useTsconfigDeclarationDir: true,
+				tsconfigOverride: {
+					compilerOptions: {
+						module: "esnext",
+						allowJs: false,
+						declaration: true,
+						declarationDir: "types"
+					}
+				}
 			}),
 			json(),
 			commonjs(),

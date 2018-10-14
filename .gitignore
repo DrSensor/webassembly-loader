@@ -1,5 +1,11 @@
+# ( ͡° ͜ʖ ͡°)
 .utopian/
 .NOTE.md
+
+# Generated folder
+types/
+dist/
+.rpt2_cache/
 
 # Rust
 *.lock
