@@ -1,6 +1,15 @@
 # @prettier
 version: 2
 
+rustup_nightly: &rustup_nightly
+  run:
+    name: Install Cargo and Rust compiler
+    command: |
+      echo 'export PATH="$HOME/.cargo/bin:$PATH"' >> $BASH_ENV
+      curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain nightly
+      source $BASH_ENV
+      rustup target add wasm32-unknown-unknown --toolchain nightly
+
 unit_tests: &unit_tests
   steps:
     - checkout
@@ -15,6 +24,29 @@ unit_tests: &unit_tests
     - run:
         name: Run unit tests.
         command: npm run ci:test
+
+smoke_tests: &smoke_tests
+  steps:
+    - checkout
+    - restore_cache:
+        key: dependency-cache-{{ checksum "package-lock.json" }}
+    - <<: *rustup_nightly #TODO: replace this when CircleCI can make steps reusable in multiple jobs
+    - run:
+        name: NPM Rebuild
+        command: npm install --quiet
+    - run:
+        name: Build & Bundle project
+        command: npm run build
+    - run:
+        name: NPM install dependencies for smoke-test
+        command: |
+          cd examples/${EXAMPLE_PROJECT}
+          npm install
+    - run:
+        name: Run smoke tests
+        command: |
+          cd examples/${EXAMPLE_PROJECT}
+          npm run build
 
 jobs:
   #region PREPARATION
@@ -87,6 +119,15 @@ jobs:
     <<: *unit_tests
   #endregion
 
+  #region TEST BY EXAMPLES
+  smoke-rust-vue:
+    docker:
+      - image: circleci/node:latest
+    environment:
+      - EXAMPLE_PROJECT: rust/vue
+    <<: *smoke_tests
+  #endregion
+
   #region RELEASE VERSION
   draft:
     docker:
@@ -157,6 +198,15 @@ workflows:
           requires:
             - analysis
             # - node6-latest
+          filters:
+            tags:
+              only: /.*/
+      #endregion
+
+      #region TEST BY EXAMPLES
+      - smoke-rust-vue:
+          requires:
+            - node8-latest
           filters:
             tags:
               only: /.*/
