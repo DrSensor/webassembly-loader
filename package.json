@@ -7,6 +7,7 @@
 	"files": ["dist/"],
 	"scripts": {
 		"build": "rollup -c",
+		"postbuild": "shx mv types/src/**/*.ts types && shx rm -r types/src",
 		"start": "rollup -c --watch",
 		"lint": "(tsc --pretty -p . --noemit || true) && tslint -p . --force",
 		"lint:fix": "tslint -p . --fix --force",
@@ -76,6 +77,7 @@
 		"rollup-plugin-node-resolve": "^3.4",
 		"rollup-plugin-prettier": "^0.4",
 		"rollup-plugin-typescript2": "^0.17",
+		"shx": "^0.3.2",
 		"standard-version": "^4.4",
 		"ts-jest": "^23.10",
 		"ts-node": "^7.0",
