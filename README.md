@@ -17,7 +17,7 @@
 
 # webassembly-loader
 
-> this loader can also be used as a library
+> this loader can also be used as a library <sup>↙ see [who use this?](#who-use-this)</sup>
 
 <sup><sup>tl;dr -- see [examples](#examples)</sup></sup>
 
