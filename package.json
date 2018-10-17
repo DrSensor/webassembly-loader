@@ -3,8 +3,9 @@
 	"version": "1.0.0",
 	"description": "Webpack loader for WebAssembly (like wasm-loader but have different export options)",
 	"main": "dist/index.js",
-	"typings": "types/index.ts",
-	"files": ["dist/"],
+	"module": "dist/index.esm.js",
+	"typings": "types/transform.d.ts",
+	"files": ["dist/", "types/"],
 	"scripts": {
 		"build": "rollup -c",
 		"postbuild": "shx mv types/src/**/*.ts types && shx rm -r types/src",

@@ -17,33 +17,45 @@ const prettierrc = {
 }
 // #endregion
 
-// Rollup Configuration
+// #region Rollup Configuration
+const plugins = [
+	json(),
+	typescript({
+		exclude: ["test/**"],
+		useTsconfigDeclarationDir: true,
+		tsconfigOverride: {
+			compilerOptions: {
+				module: "esnext",
+				allowJs: false,
+				declaration: true,
+				declarationDir: "types"
+			}
+		}
+	}),
+	babel(),
+	commonjs(),
+	moduleResolve(),
+	autoExternal(),
+	prettier(prettierrc.files("*.js"))
+]
+
 export default [
 	{
 		input: "src/index.ts",
 		output: {
 			file: pkg.main,
-			format: "cjs"
+			format: "cjs",
+			exports: "named"
 		},
-		plugins: [
-			typescript({
-				exclude: ["test/**"],
-				useTsconfigDeclarationDir: true,
-				tsconfigOverride: {
-					compilerOptions: {
-						module: "esnext",
-						allowJs: false,
-						declaration: true,
-						declarationDir: "types"
-					}
-				}
-			}),
-			json(),
-			commonjs(),
-			moduleResolve(),
-			babel(),
-			autoExternal(),
-			prettier(prettierrc.files("*.js"))
-		]
+		plugins
+	},
+	{
+		input: "src/transform.ts",
+		output: {
+			file: pkg.module,
+			format: "esm"
+		},
+		plugins
 	}
 ]
+// #endregion
