@@ -1,12 +1,14 @@
-declare module '@webpack-contrib/schema-utils' {
+declare module 'schema-utils' {
   import { OptionObject } from 'loader-utils';
 
-  interface Options {
-    name: string;
-    schema: { [key: string]: any };
-    target: OptionObject;
+  type Primitive = string | number | boolean;
+  interface JSONSchema {
+    [key: string]: Primitive | JSONSchema | Primitive[];
   }
 
-  const validate: (options: Options) => void;
-  export default validate;
+  export default function(
+    schema: JSONSchema,
+    options: OptionObject,
+    name: string
+  ): void;
 }

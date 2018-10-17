@@ -12,6 +12,16 @@ declare global {
       export: Type;
     }
   }
+
+  namespace Module {
+    type Type = 'cjs' | 'esm';
+
+    interface Options {
+      export: Export.Type;
+      errorHandler?: (message: string) => void | never;
+      module?: Type;
+    }
+  }
 }
 
 export default null;

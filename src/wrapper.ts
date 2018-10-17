@@ -3,29 +3,33 @@
  * @return chainable object which represent `wrap this data as...`
  * @example return wrap(arrayBuffer).asWebAssembly.Module
  */
-export default function(buffer: Buffer) {
+export default function(buffer: Buffer, module?: Module.Type) {
   const data = buffer.toJSON().data.toString();
+  let exportString = 'module.exports ='; // if (module === 'cjs')
+
+  if (module === 'esm') exportString = 'export default';
+
   return {
-    asBuffer: `module.exports = Buffer.from([${data}])`,
+    asBuffer: `${exportString} Buffer.from([${data}])`,
     asWebAssembly: {
-      Module: `module.exports = new WebAssembly.Module(
+      Module: `${exportString} new WebAssembly.Module(
           Buffer.from([${data}])
         )`,
-      Instance: `module.exports = new WebAssembly.Instance(
+      Instance: `${exportString} new WebAssembly.Instance(
           new WebAssembly.Module(
             Buffer.from([${data}])
           )
         )`
     },
     promiseWebAssembly: {
-      Module: `module.exports = () => WebAssembly.compile(
+      Module: `${exportString} () => WebAssembly.compile(
           Buffer.from([${data}])
         )`,
-      Instance: `module.exports = importObject => WebAssembly.instantiate(
+      Instance: `${exportString} importObject => WebAssembly.instantiate(
           new WebAssembly.Module(Buffer.from([${data}])),
           importObject
         )`,
-      Both: `module.exports = importObject => WebAssembly.instantiate(
+      Both: `${exportString} importObject => WebAssembly.instantiate(
             Buffer.from([${data}]), importObject
         )`
     }
