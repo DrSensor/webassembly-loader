@@ -1,6 +1,6 @@
 {
 	"name": "webassembly-loader",
-	"version": "1.0.0",
+	"version": "1.1.0",
 	"description": "Webpack loader for WebAssembly (like wasm-loader but have different export options)",
 	"main": "dist/index.js",
 	"module": "dist/index.esm.js",
