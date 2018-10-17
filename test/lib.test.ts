@@ -1,5 +1,5 @@
 // tslint:disable:no-eval
-import { wasm2js } from '../dist';
+import wasm2js from '../dist/index.esm';
 import 'jest-extended';
 
 describe('When used as a Library', () => {
@@ -7,7 +7,7 @@ describe('When used as a Library', () => {
   const wasmBuffer = Buffer.from([0x00, 0x61, 0x73, 0x6d, 0x01, 0, 0, 0]);
 
   describe('export: "buffer"', () => {
-    const code = wasm2js(wasmBuffer, 'buffer');
+    const code = wasm2js(wasmBuffer, { export: 'buffer' });
     const exportedModule = eval(code);
 
     test('exported module to be identical with input', () =>
@@ -17,21 +17,21 @@ describe('When used as a Library', () => {
   });
 
   test('exported as WebAssembly.Module', () => {
-    const code = wasm2js(wasmBuffer, 'module');
+    const code = wasm2js(wasmBuffer, { export: 'module' });
     const exportedModule = eval(code);
 
     expect(exportedModule).toBeInstanceOf(WebAssembly.Module);
   });
 
   test('exported as WebAssembly.Instance', () => {
-    const code = wasm2js(wasmBuffer, 'instance');
+    const code = wasm2js(wasmBuffer, { export: 'instance' });
     const exportedModule = eval(code);
 
     expect(exportedModule).toBeInstanceOf(WebAssembly.Instance);
   });
 
   test('export of WebAssembly.compile', () => {
-    const code = wasm2js(wasmBuffer, 'async-module');
+    const code = wasm2js(wasmBuffer, { export: 'async-module' });
     const exportedModule = eval(code);
 
     expect(exportedModule).toBeFunction();
@@ -39,7 +39,7 @@ describe('When used as a Library', () => {
   });
 
   test('export of WebAssembly.instantiate(WebAssembly.Module)', () => {
-    const code = wasm2js(wasmBuffer, 'async-instance');
+    const code = wasm2js(wasmBuffer, { export: 'async-instance' });
     const exportedModule = eval(code);
 
     expect(exportedModule).toBeFunction();
@@ -47,7 +47,7 @@ describe('When used as a Library', () => {
   });
 
   test('export of WebAssembly.instantiate(Buffer))', () => {
-    const code = wasm2js(wasmBuffer, 'async');
+    const code = wasm2js(wasmBuffer, { export: 'async' });
     const exportedModule = eval(code);
 
     expect(exportedModule).toBeFunction();

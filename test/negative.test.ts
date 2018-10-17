@@ -5,7 +5,7 @@ import { readFileSync } from 'fs';
 import webpack = require('@webpack-contrib/test-utils');
 import on from './helpers/on';
 import { exportOptions } from './test-list';
-import { wasm2js } from '../dist';
+import wasm2js from '../dist/index.esm';
 
 describe('All possible error when using invalid wasm file', () => {
   let config: any;
@@ -27,29 +27,38 @@ describe('All possible error when using invalid wasm file', () => {
       resolve(__dirname, 'fixtures/invalid/foo.wasm')
     );
 
-    test.each(exportOptions.all)('export as %s should throw an error', opts =>
-      expect(() => wasm2js(wasmBuffer, opts)).toThrowError()
+    test.each(exportOptions.all)('export as %s should throw an error', s =>
+      expect(() => wasm2js(wasmBuffer, { export: s })).toThrowError()
     );
 
     describe('Use empty callback error', () => {
       test.each(['instance', 'module'])(
         'export as %s should throw an error when imported',
-        async opts => {
-          const code = wasm2js(wasmBuffer, opts, () => ({}));
+        async s => {
+          const code = wasm2js(wasmBuffer, {
+            export: s,
+            errorHandler: () => ({})
+          });
 
           expect(() => eval(code)).toThrowError();
         }
       );
 
       test('export as async-instance should throw an error when called', async () => {
-        const code = wasm2js(wasmBuffer, 'async-instance', () => ({}));
+        const code = wasm2js(wasmBuffer, {
+          export: 'async-instance',
+          errorHandler: () => ({})
+        });
         const exportedModule = eval(code);
 
         expect(() => exportedModule()).toThrowError();
       });
 
       test('export as buffer should be not a valid WebAssembly', async () => {
-        const code = wasm2js(wasmBuffer, 'buffer', () => ({}));
+        const code = wasm2js(wasmBuffer, {
+          export: 'buffer',
+          errorHandler: () => ({})
+        });
         const exportedModule = eval(code);
 
         expect(WebAssembly.validate(exportedModule)).toBeFalse();
@@ -57,8 +66,11 @@ describe('All possible error when using invalid wasm file', () => {
 
       test.each(['async', 'async-module'])(
         'export as %s should Promise.reject when called',
-        async opts => {
-          const code = wasm2js(wasmBuffer, opts, () => ({}));
+        async s => {
+          const code = wasm2js(wasmBuffer, {
+            export: s,
+            errorHandler: () => ({})
+          });
           const exportedModule = eval(code);
 
           expect(exportedModule()).toReject();
