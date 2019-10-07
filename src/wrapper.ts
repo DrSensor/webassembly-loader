@@ -1,9 +1,11 @@
+import { ModuleType } from './transform';
+
 /** Wrap binary data as commonjs module so it can be imported by doing require(module)
  * @param buffer raw binary data to be wrapped as es6 module
  * @return chainable object which represent `wrap this data as...`
  * @example return wrap(arrayBuffer).asWebAssembly.Module
  */
-export default function(buffer: Buffer, module?: Module.Type) {
+export default function(buffer: Buffer, module?: ModuleType) {
   const data = buffer.toJSON().data.toString();
   let exportString = 'module.exports ='; // if (module === 'cjs')
 

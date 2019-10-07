@@ -1,9 +1,19 @@
-import './__global';
+import {
+  WebAssemblyLoaderExportType,
+  WebAssemblyLoaderOptions
+} from './options';
 import wrap from './wrapper';
 
+export type ModuleType = 'cjs' | 'esm';
+
+interface TransformModuleOptions extends Required<WebAssemblyLoaderOptions> {
+  errorHandler?: (message: string) => void | never;
+  module?: ModuleType;
+}
+
 //#region helpers
-const is = (type: string) => ({
-  oneOf: (types: string[]) => types.some(_ => _ === type)
+const is = (type: WebAssemblyLoaderExportType) => ({
+  oneOf: (types: WebAssemblyLoaderExportType[]) => types.some(_ => _ === type)
 });
 function panic(message: string, cb?: (msg: string) => void) {
   if (cb) cb(message);
@@ -19,7 +29,7 @@ function panic(message: string, cb?: (msg: string) => void) {
  */
 export default function(
   source: Buffer,
-  options: Module.Options
+  options: TransformModuleOptions
 ): string | never {
   if (WebAssembly.validate(source) === false)
     panic('Invalid WebAssembly file', options.errorHandler);
