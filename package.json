@@ -5,7 +5,7 @@
 	"main": "dist/index.js",
 	"module": "dist/index.esm.js",
 	"typings": "types/transform.d.ts",
-	"files": ["dist/", "types/"],
+	"files": ["dist/", "types/", "tsconfig.json"],
 	"scripts": {
 		"build": "rollup -c",
 		"postbuild": "shx mv types/src/**/*.ts types && shx rm -r types/src",

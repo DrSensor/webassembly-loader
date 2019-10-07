@@ -1,5 +1,6 @@
 import * as path from 'path';
 import { generateSchema, getProgramFromFiles } from 'typescript-json-schema';
+import tsconfig from '../tsconfig.json';
 
 export type WebAssemblyLoaderExportType =
   | 'buffer'
@@ -16,7 +17,7 @@ export interface WebAssemblyLoaderOptions {
 // bear in mind this is ran from dist
 const program = getProgramFromFiles(
   [path.resolve(__dirname, '../types/options.d.ts')],
-  { strict: true },
+  tsconfig.compilerOptions,
   path.resolve(__dirname, '..')
 );
 
