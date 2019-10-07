@@ -1,13 +1,9 @@
 declare module 'schema-utils' {
   import { OptionObject } from 'loader-utils';
-
-  type Primitive = string | number | boolean;
-  interface JSONSchema {
-    [key: string]: Primitive | JSONSchema | Primitive[];
-  }
+  import { Definition } from 'typescript-json-schema';
 
   export default function(
-    schema: JSONSchema,
+    schema: Definition | null,
     options: OptionObject,
     name: string
   ): void;

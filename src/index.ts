@@ -1,8 +1,7 @@
 import { loader } from 'webpack';
 import { getOptions } from 'loader-utils';
 import validate from 'schema-utils';
-
-import schema from './options.json';
+import { schema } from './options';
 import wasm2js from './transform';
 
 const defaultOptions = {
@@ -24,3 +23,8 @@ module.exports = function(this: loader.LoaderContext, source: Buffer) {
 
 module.exports.raw = true;
 export default wasm2js;
+
+export {
+  WebAssemblyLoaderExportType,
+  WebAssemblyLoaderOptions
+} from './options';
