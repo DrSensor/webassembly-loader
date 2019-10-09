@@ -1,16 +1,15 @@
 import { loader } from 'webpack';
 import { getOptions } from 'loader-utils';
 import validate from 'schema-utils';
-
-import schema from './options.json';
+import { WebAssemblyLoaderOptions, schema } from './options';
 import wasm2js from './transform';
 
-const defaultOptions = {
+const defaultOptions: WebAssemblyLoaderOptions = {
   export: 'async'
-} as Export.Options;
+};
 
 module.exports = function(this: loader.LoaderContext, source: Buffer) {
-  const options: Partial<Export.Options> = getOptions(this) || defaultOptions;
+  const options: WebAssemblyLoaderOptions = getOptions(this) || defaultOptions;
 
   validate(schema, options, 'webassembly-loader');
 
@@ -24,3 +23,8 @@ module.exports = function(this: loader.LoaderContext, source: Buffer) {
 
 module.exports.raw = true;
 export default wasm2js;
+
+export {
+  WebAssemblyLoaderExportType,
+  WebAssemblyLoaderOptions
+} from './options';
