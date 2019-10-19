@@ -104,5 +104,9 @@ jobs:
     container:
       image: node:10
     needs: [unit_tests]
+    steps:
+    - uses: actions/checkout@v1
+    - name: Run Tests on Node 10 
+      run: echo Hello, world!
   
     
