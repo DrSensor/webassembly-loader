@@ -1,6 +1,9 @@
-name: CI
+name: CI & CD
 
-on: [push]
+on: 
+  push:
+    tags:
+      - /.*/
 
 jobs:
   build:
@@ -19,6 +22,8 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Install Cargo and Rust compiler
+      env: 
+        BASH_ENV: '~/.bashrc'
       run: |
         echo 'export PATH="$HOME/.cargo/bin:$PATH"' >> $BASH_ENV
         curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain 1.28.0
@@ -46,6 +51,8 @@ jobs:
     - name: Build & Bundle project
       run: npm run build
     - name: NPM install dependencies for smoke-test
+      env:
+        EXAMPLE_PROJECT: 'rust/vue'
       run: |
         cd examples/${EXAMPLE_PROJECT}
         npm install
@@ -68,6 +75,7 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: node:latest
+    needs: [dependency_cache]
     steps:
     - uses: actions/checkout@v1
     - name: NPM Rebuild
@@ -81,6 +89,7 @@ jobs:
   
   node8-latest:
     runs-on: ubuntu-latest
+    needs: [analysis]
     container:
       image: node:8
     steps:
@@ -94,7 +103,7 @@ jobs:
     - name: Submit coverage data to codecov.
       run: |
         if [[ -z $CIRCLE_PULL_REQUEST ]]; then
-          bash <(curl -s https://codecov.io/bash)
+          bash < (curl -s https://codecov.io/bash )
         fi
       if: success()
   
@@ -103,7 +112,7 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: node:10
-    needs: [unit_tests]
+    needs: [unit_tests, analysis]
     steps:
     - uses: actions/checkout@v1
     - name: Run Tests on Node 10 
