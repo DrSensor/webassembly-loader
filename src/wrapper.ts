@@ -1,7 +1,11 @@
 import { ModuleType } from './transform';
 
-function bufferAsString(buffer: Buffer) {
-  return `[${buffer.toJSON().data.join(',')}]`;
+function bufferAsString(buffer: Buffer, useJSONParse: boolean) {
+  const bufferArray = `[${buffer.toJSON().data.join(',')}]`;
+  if (!useJSONParse) return bufferArray;
+
+  // this array will only contain numbers, so no need to worry about escaping quotes
+  return `JSON.parse('${bufferArray}')`;
 }
 
 /** Wrap binary data as commonjs module so it can be imported by doing require(module)
@@ -9,12 +13,16 @@ function bufferAsString(buffer: Buffer) {
  * @return chainable object which represent `wrap this data as...`
  * @example return wrap(arrayBuffer).asWebAssembly.Module
  */
-export default function(buffer: Buffer, module?: ModuleType) {
+export default function(
+  buffer: Buffer,
+  module?: ModuleType,
+  useJSONParse: boolean = false
+) {
   let exportString = 'module.exports ='; // if (module === 'cjs')
 
   if (module === 'esm') exportString = 'export default';
 
-  const bufferString = `Buffer.from(${bufferAsString(buffer)})`;
+  const bufferString = `Buffer.from(${bufferAsString(buffer, useJSONParse)})`;
 
   return {
     asBuffer: () => `${exportString} ${bufferString}`,

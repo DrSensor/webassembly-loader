@@ -12,6 +12,7 @@ export type WebAssemblyLoaderExportType =
 
 export interface WebAssemblyLoaderOptions {
   export?: WebAssemblyLoaderExportType;
+  useJSONParse?: boolean;
 }
 
 // bear in mind this is ran from dist

@@ -45,7 +45,7 @@ export default function(
       options.errorHandler
     );
 
-  const wrapped = wrap(source, options.module);
+  const wrapped = wrap(source, options.module, options.useJSONParse);
 
   switch (options.export) {
     case 'buffer':

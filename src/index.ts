@@ -16,6 +16,7 @@ module.exports = function(this: loader.LoaderContext, source: Buffer) {
   // if (options.export === 'buffer') return source; /*🤔*/
   return wasm2js(source, {
     export: options.export!,
+    useJSONParse: options.useJSONParse!,
     module: 'cjs',
     errorHandler: errMsg => this.emitError(errMsg)
   });
