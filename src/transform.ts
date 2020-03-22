@@ -45,19 +45,21 @@ export default function(
       options.errorHandler
     );
 
+  const wrapped = wrap(source, options.module);
+
   switch (options.export) {
     case 'buffer':
-      return wrap(source, options.module).asBuffer;
+      return wrapped.asBuffer;
     case 'instance':
-      return wrap(source, options.module).asWebAssembly.Instance;
+      return wrapped.asWebAssembly.Instance;
     case 'module':
-      return wrap(source, options.module).asWebAssembly.Module;
+      return wrapped.asWebAssembly.Module;
     case 'async':
-      return wrap(source, options.module).promiseWebAssembly.Both;
+      return wrapped.promiseWebAssembly.Both;
     case 'async-instance':
-      return wrap(source, options.module).promiseWebAssembly.Instance;
+      return wrapped.promiseWebAssembly.Instance;
     case 'async-module':
-      return wrap(source, options.module).promiseWebAssembly.Module;
+      return wrapped.promiseWebAssembly.Module;
     default:
       throw new Error(`exporting as "${options.export}" not available`);
   }
