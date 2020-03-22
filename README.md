@@ -53,6 +53,17 @@ How wasm code would be exported. (see [examples](#examples))
   - `async-module` will [compile][webassembly.compile] wasm code asynchronously, return promise of [WebAssembly.Module][]
   - `async-instance` will [instantiate][webassembly.instantiate] wasm code asynchronously, return promise of [WebAssembly.Instance][]
 
+### `useJSONParse`
+The WASM buffer is stored in the generated .js file as an array of numbers. If this option is `false`, that array will be represented in the source code using regular JavaScript syntax. If this option is `true`, that array will be stored as a string, and parsed via JSON.parse, e.g:
+
+```js
+Buffer.from(JSON.parse('[0,97,115,109...]'))
+```
+This [may improve parsing speed in the browser](https://v8.dev/blog/cost-of-javascript-2019#json), and will greatly improve compilation speed if any Webpack plugins parse the .js file as it prevents them from individually parsing every array element.
+
+- Type: `boolean`
+- Default: `false`
+
 <details><summary><i>webpack.config.js</i></summary>
 
 ```js
