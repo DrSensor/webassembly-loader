@@ -49,17 +49,17 @@ export default function(
 
   switch (options.export) {
     case 'buffer':
-      return wrapped.asBuffer;
+      return wrapped.asBuffer();
     case 'instance':
-      return wrapped.asWebAssembly.Instance;
+      return wrapped.asWebAssembly.Instance();
     case 'module':
-      return wrapped.asWebAssembly.Module;
+      return wrapped.asWebAssembly.Module();
     case 'async':
-      return wrapped.promiseWebAssembly.Both;
+      return wrapped.promiseWebAssembly.Both();
     case 'async-instance':
-      return wrapped.promiseWebAssembly.Instance;
+      return wrapped.promiseWebAssembly.Instance();
     case 'async-module':
-      return wrapped.promiseWebAssembly.Module;
+      return wrapped.promiseWebAssembly.Module();
     default:
       throw new Error(`exporting as "${options.export}" not available`);
   }

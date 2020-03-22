@@ -12,26 +12,26 @@ export default function(buffer: Buffer, module?: ModuleType) {
   if (module === 'esm') exportString = 'export default';
 
   return {
-    asBuffer: `${exportString} Buffer.from([${data}])`,
+    asBuffer: () => `${exportString} Buffer.from([${data}])`,
     asWebAssembly: {
-      Module: `${exportString} new WebAssembly.Module(
+      Module: () => `${exportString} new WebAssembly.Module(
           Buffer.from([${data}])
         )`,
-      Instance: `${exportString} new WebAssembly.Instance(
+      Instance: () => `${exportString} new WebAssembly.Instance(
           new WebAssembly.Module(
             Buffer.from([${data}])
           )
         )`
     },
     promiseWebAssembly: {
-      Module: `${exportString} () => WebAssembly.compile(
+      Module: () => `${exportString} () => WebAssembly.compile(
           Buffer.from([${data}])
         )`,
-      Instance: `${exportString} importObject => WebAssembly.instantiate(
+      Instance: () => `${exportString} importObject => WebAssembly.instantiate(
           new WebAssembly.Module(Buffer.from([${data}])),
           importObject
         )`,
-      Both: `${exportString} importObject => WebAssembly.instantiate(
+      Both: () => `${exportString} importObject => WebAssembly.instantiate(
             Buffer.from([${data}]), importObject
         )`
     }
