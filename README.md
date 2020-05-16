@@ -57,16 +57,18 @@ How wasm code would be exported. (see [examples](#examples))
 
 ```js
 module.exports = {
-    rules: [{
-          test: /\.wasm$/,
-          type: "javascript/auto",
-          use: [{
-              loader: "webassembly-loader",
-              options: {
-                  export: "async"
-              }
-          }]
-    }]
+    module: {
+        rules: [{
+            test: /\.wasm$/,
+            type: "javascript/auto",
+            use: [{
+                loader: "webassembly-loader",
+                options: {
+                    export: "async"
+                }
+            }]
+        }]
+    }
 }
 ```
 </details>
